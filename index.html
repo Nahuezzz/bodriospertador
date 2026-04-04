@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somnífero para Pau</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(10, 0, 0, 0.88);
+            --glass-border: rgba(220, 38, 38, 0.4);
+            --accent-red: #991b1b; 
+            --bright-red: #ff1e1e; 
+            --text-dim: #fecaca;    
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            background-image: radial-gradient(circle at center, rgba(60, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%), 
+                              url('https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/54d784be3db8503ec574ff45e912ea098cc10352-854x484.png?accountingTag=VAL');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: var(--text-dim);
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 1);
+        }
+
+        .timer-font {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--bright-red);
+            text-shadow: 0 0 20px rgba(255, 30, 30, 0.6);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            background: #000;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            filter: brightness(0.5) contrast(1.1);
+        }
+
+        .pulse-active {
+            animation: pulse-ring 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0px rgba(220, 38, 38, 0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0px rgba(220, 38, 38, 0); }
+        }
+
+        .timer-input {
+            width: 70px;
+            background: transparent;
+            font-size: 3rem;
+            font-weight: 900;
+            text-align: center;
+            border-bottom: 2px solid rgba(220, 38, 38, 0.5);
+            outline: none;
+            transition: all 0.4s ease;
+            color: var(--bright-red);
+        }
+
+        @media (min-width: 768px) {
+            .timer-input {
+                width: 95px;
+                font-size: 4rem;
+            }
+        }
+
+        .timer-input:focus {
+            border-bottom-color: #ff4d4d;
+            transform: translateY(-2px);
+        }
+
+        .main-title {
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.8);
+            letter-spacing: 0.2em;
+            color: #ff1e1e;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .btn-main {
+            background: linear-gradient(180deg, #dc2626 0%, #7f1d1d 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-main:active {
+            transform: scale(0.95);
+        }
+
+        .btn-stop {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fca5a5;
+            border: 1px solid rgba(220, 38, 38, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container max-w-2xl px-4 py-8 md:py-12">
+        <h1 class="main-title text-center text-lg md:text-3xl mb-8 md:mb-12 uppercase opacity-95">
+            SOMNÍFERO PARA PAU
+        </h1>
+
+        <div class="flex flex-col gap-6 md:gap-10">
+            <div id="timerContainer" class="glass rounded-[2rem] md:rounded-[3.5rem] p-8 md:p-12 text-center transition-all duration-700 relative overflow-hidden">
+                
+                <div id="inputSection" class="flex justify-center items-center gap-3 md:gap-6 mb-8 md:mb-10">
+                    <div class="flex flex-col items-center">
+                        <input type="number" id="hrs" value="00" min="0" max="23" 
+                               oninput="validateInput(this, 23)" 
+                               onblur="formatOnBlur(this)"
+                               class="timer-input">
+                        <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Horas</span>
+                    </div>
+                    <span class="text-3xl md:text-6xl font-thin opacity-30 text-red-500 mb-6 md:mb-12">:</span>
+                    <div class="flex flex-col items-center">
+                        <input type="number" id="min" value="00" min="0" max="59" 
+                               oninput="validateInput(this, 59)" 
+                               onblur="formatOnBlur(this)"
+                               class="timer-input">
+                        <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Minutos</span>
+                    </div>
+                    <span class="text-3xl md:text-6xl font-thin opacity-30 text-red-500 mb-6 md:mb-12">:</span>
+                    <div class="flex flex-col items-center">
+                        <input type="number" id="sec" value="00" min="0" max="59" 
+                               oninput="validateInput(this, 59)" 
+                               onblur="formatOnBlur(this)"
+                               class="timer-input">
+                        <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Segundos</span>
+                    </div>
+                </div>
+
+                <div id="timerDisplay" class="timer-font text-6xl md:text-8xl font-black mb-8 md:mb-12 hidden">
+                    00:00:00
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
+                    <button id="actionBtn" onclick="handleTimerAction()" class="btn-main text-white px-10 md:px-20 py-4 md:py-5 rounded-2xl md:rounded-3xl font-black text-lg md:text-xl tracking-[0.1em] md:tracking-[0.2em] transition-all">
+                        COMENZAR
+                    </button>
+                    <button id="resetBtn" onclick="resetAll()" class="btn-stop px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-3xl font-bold text-base md:text-lg hidden transition-all">
+                        DETENER
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass rounded-[2rem] md:rounded-[3.5rem] p-3 md:p-4 shadow-2xl">
+                <div class="video-wrapper">
+                    <div id="yt-player"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        // Corregido: Solo el ID sin parámetros extra
+        const VIDEO_ID = 'pZbkpOc5UuU'; 
+
+        let player;
+        let timerInterval;
+        let secondsLeft = 0;
+        let isRunning = false;
+
+        function validateInput(input, max) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 2) {
+                input.value = input.value.slice(0, 2);
+            }
+            let val = parseInt(input.value);
+            if (val > max) {
+                input.value = max;
+            }
+        }
+
+        function formatOnBlur(input) {
+            if (input.value === "" || input.value.length === 0) {
+                input.value = "00";
+            } else if (input.value.length === 1) {
+                input.value = "0" + input.value;
+            }
+        }
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('yt-player', {
+                height: '100%',
+                width: '100%',
+                videoId: VIDEO_ID,
+                playerVars: { 
+                    'autoplay': 0, 
+                    'controls': 1,
+                    'rel': 0,
+                    'modestbranding': 1,
+                    'iv_load_policy': 3,
+                    'playsinline': 1
+                }
+            });
+        }
+
+        function handleTimerAction() {
+            const btn = document.getElementById('actionBtn');
+            
+            if (!isRunning) {
+                if (secondsLeft === 0) {
+                    const h = parseInt(document.getElementById('hrs').value) || 0;
+                    const m = parseInt(document.getElementById('min').value) || 0;
+                    const s = parseInt(document.getElementById('sec').value) || 0;
+                    secondsLeft = (h * 3600) + (m * 60) + s;
+                }
+
+                if (secondsLeft <= 0) return;
+
+                document.getElementById('inputSection').classList.add('hidden');
+                document.getElementById('timerDisplay').classList.remove('hidden');
+                document.getElementById('resetBtn').classList.remove('hidden');
+                document.getElementById('timerContainer').classList.add('pulse-active');
+                
+                btn.innerText = "PAUSAR";
+                btn.classList.add('opacity-80');
+
+                isRunning = true;
+                startCountdown();
+                if (player && player.playVideo) player.playVideo();
+            } else {
+                clearInterval(timerInterval);
+                isRunning = false;
+                btn.innerText = "REANUDAR";
+                btn.classList.remove('opacity-80');
+                document.getElementById('timerContainer').classList.remove('pulse-active');
+                if (player && player.pauseVideo) player.pauseVideo();
+            }
+        }
+
+        function startCountdown() {
+            updateDisplay();
+            timerInterval = setInterval(() => {
+                if (secondsLeft > 0) {
+                    secondsLeft--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    onComplete();
+                }
+            }, 1000);
+        }
+
+        function updateDisplay() {
+            const h = Math.floor(secondsLeft / 3600);
+            const m = Math.floor((secondsLeft % 3600) / 60);
+            const s = secondsLeft % 60;
+            document.getElementById('timerDisplay').innerText = 
+                `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function resetAll() {
+            clearInterval(timerInterval);
+            secondsLeft = 0;
+            isRunning = false;
+            
+            document.getElementById('inputSection').classList.remove('hidden');
+            document.getElementById('timerDisplay').classList.add('hidden');
+            document.getElementById('resetBtn').classList.add('hidden');
+            document.getElementById('timerContainer').classList.remove('pulse-active');
+            
+            const btn = document.getElementById('actionBtn');
+            btn.innerText = "COMENZAR";
+            btn.classList.remove('opacity-80');
+              
+            if (player && player.stopVideo) player.stopVideo();
+        }
+
+        function onComplete() {
+            if (player && player.pauseVideo) player.pauseVideo();
+            document.getElementById('alarm-sound').play();
+            
+            const container = document.getElementById('timerContainer');
+            container.classList.remove('pulse-active');
+            container.classList.add('bg-red-900/40');
+            
+            setTimeout(() => {
+                container.classList.remove('bg-red-900/40');
+                resetAll();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
