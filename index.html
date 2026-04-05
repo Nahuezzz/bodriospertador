@@ -10,7 +10,6 @@
         :root {
             --glass-bg: rgba(10, 0, 0, 0.88);
             --glass-border: rgba(220, 38, 38, 0.4);
-            --accent-red: #991b1b; 
             --bright-red: #ff1e1e; 
             --text-dim: #fecaca;    
         }
@@ -30,6 +29,75 @@
             margin: 0;
             color: var(--text-dim);
             overflow-x: hidden;
+        }
+
+        #omaigaa-btn {
+            display: block;
+            margin: 0 auto 15px auto;
+            opacity: 0.4;
+            font-size: 0.75rem;
+            color: var(--bright-red);
+            border: 1px solid var(--glass-border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+        }
+
+        #omaigaa-btn:hover:not(:disabled) {
+            opacity: 1;
+            background: rgba(220, 38, 38, 0.2);
+            box-shadow: 0 0 15px var(--bright-red);
+        }
+
+        #omaigaa-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.1;
+        }
+
+        .heart-particle {
+            position: fixed;
+            color: #ff1e1e;
+            pointer-events: none;
+            z-index: 99;
+            animation: heartFall linear forwards;
+            text-shadow: 0 0 10px rgba(255, 30, 30, 0.8);
+        }
+
+        @keyframes heartFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        #adoro-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            text-align: center;
+            width: 100%;
+        }
+
+        .fade-in-out {
+            animation: fadeInOut 4s ease-in-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, -60%); }
+            20% { opacity: 1; transform: translate(-50%, -50%); }
+            80% { opacity: 1; transform: translate(-50%, -50%); }
+            100% { opacity: 0; transform: translate(-50%, -40%); }
         }
 
         .glass {
@@ -62,14 +130,12 @@
             border: 1px solid rgba(220, 38, 38, 0.3);
         }
 
-        .video-wrapper iframe {
+        .video-wrapper iframe, .video-wrapper div {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border: none;
-            filter: brightness(0.5) contrast(1.1);
         }
 
         .pulse-active {
@@ -95,10 +161,8 @@
         }
 
         @media (min-width: 768px) {
-            .timer-input {
-                width: 95px;
-                font-size: 4rem;
-            }
+            .timer-input { width: 95px; font-size: 4rem; }
+            #adoro-text { font-size: 4rem; }
         }
 
         .timer-input:focus {
@@ -120,10 +184,6 @@
             box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
         }
 
-        .btn-main:active {
-            transform: scale(0.95);
-        }
-
         .btn-stop {
             background: rgba(0, 0, 0, 0.8);
             color: #fca5a5;
@@ -133,57 +193,47 @@
 </head>
 <body>
 
+    <div id="adoro-text">te adoro merlina</div>
+
     <div class="container max-w-2xl px-4 py-8 md:py-12">
         <h1 class="main-title text-center text-lg md:text-3xl mb-8 md:mb-12 uppercase opacity-95">
             SOMNÍFERO PARA PAU
         </h1>
 
         <div class="flex flex-col gap-6 md:gap-10">
-            <div id="timerContainer" class="glass rounded-[2rem] md:rounded-[3.5rem] p-8 md:p-12 text-center transition-all duration-700 relative overflow-hidden">
-                
-                <div id="inputSection" class="flex justify-center items-center gap-3 md:gap-6 mb-8 md:mb-10">
-                    <div class="flex flex-col items-center">
-                        <input type="number" id="hrs" value="00" min="0" max="23" 
-                               oninput="validateInput(this, 23)" 
-                               onblur="formatOnBlur(this)"
-                               class="timer-input">
-                        <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Horas</span>
+            <div>
+                <button id="omaigaa-btn" onclick="triggerHearts()">omaigaa</button>
+                <div id="timerContainer" class="glass rounded-[2rem] md:rounded-[3.5rem] p-8 md:p-12 text-center transition-all duration-700 relative overflow-hidden">
+                    
+                    <div id="inputSection" class="flex justify-center items-center gap-3 md:gap-6 mb-8 md:mb-10">
+                        <div class="flex flex-col items-center">
+                            <input type="number" id="hrs" value="00" min="0" max="23" oninput="validateInput(this, 23)" onblur="formatOnBlur(this)" class="timer-input">
+                            <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Horas</span>
+                        </div>
+                        <span class="text-3xl md:text-6xl font-thin opacity-30 text-red-500 mb-6 md:mb-12">:</span>
+                        <div class="flex flex-col items-center">
+                            <input type="number" id="min" value="00" min="0" max="59" oninput="validateInput(this, 59)" onblur="formatOnBlur(this)" class="timer-input">
+                            <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Minutos</span>
+                        </div>
+                        <span class="text-3xl md:text-6xl font-thin opacity-30 text-red-500 mb-6 md:mb-12">:</span>
+                        <div class="flex flex-col items-center">
+                            <input type="number" id="sec" value="00" min="0" max="59" oninput="validateInput(this, 59)" onblur="formatOnBlur(this)" class="timer-input">
+                            <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Segundos</span>
+                        </div>
                     </div>
-                    <span class="text-3xl md:text-6xl font-thin opacity-30 text-red-500 mb-6 md:mb-12">:</span>
-                    <div class="flex flex-col items-center">
-                        <input type="number" id="min" value="00" min="0" max="59" 
-                               oninput="validateInput(this, 59)" 
-                               onblur="formatOnBlur(this)"
-                               class="timer-input">
-                        <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Minutos</span>
-                    </div>
-                    <span class="text-3xl md:text-6xl font-thin opacity-30 text-red-500 mb-6 md:mb-12">:</span>
-                    <div class="flex flex-col items-center">
-                        <input type="number" id="sec" value="00" min="0" max="59" 
-                               oninput="validateInput(this, 59)" 
-                               onblur="formatOnBlur(this)"
-                               class="timer-input">
-                        <span class="text-[9px] md:text-[11px] uppercase tracking-[0.2em] md:tracking-[0.4em] mt-3 md:mt-5 text-red-600 font-black">Segundos</span>
-                    </div>
-                </div>
 
-                <div id="timerDisplay" class="timer-font text-6xl md:text-8xl font-black mb-8 md:mb-12 hidden">
-                    00:00:00
-                </div>
+                    <div id="timerDisplay" class="timer-font text-6xl md:text-8xl font-black mb-8 md:mb-12 hidden">00:00:00</div>
 
-                <div class="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
-                    <button id="actionBtn" onclick="handleTimerAction()" class="btn-main text-white px-10 md:px-20 py-4 md:py-5 rounded-2xl md:rounded-3xl font-black text-lg md:text-xl tracking-[0.1em] md:tracking-[0.2em] transition-all">
-                        COMENZAR
-                    </button>
-                    <button id="resetBtn" onclick="resetAll()" class="btn-stop px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-3xl font-bold text-base md:text-lg hidden transition-all">
-                        DETENER
-                    </button>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
+                        <button id="actionBtn" onclick="handleTimerAction()" class="btn-main text-white px-10 md:px-20 py-4 md:py-5 rounded-2xl md:rounded-3xl font-black text-lg md:text-xl tracking-[0.1em] md:tracking-[0.2em] transition-all">COMENZAR</button>
+                        <button id="resetBtn" onclick="resetAll()" class="btn-stop px-8 md:px-12 py-4 md:py-5 rounded-2xl md:rounded-3xl font-bold text-base md:text-lg hidden transition-all">DETENER</button>
+                    </div>
                 </div>
             </div>
 
             <div class="glass rounded-[2rem] md:rounded-[3.5rem] p-3 md:p-4 shadow-2xl">
                 <div class="video-wrapper">
-                    <div id="yt-player"></div>
+                    <div id="player"></div>
                 </div>
             </div>
         </div>
@@ -191,54 +241,91 @@
 
     <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // Corregido: Solo el ID sin parámetros extra
         const VIDEO_ID = 'pZbkpOc5UuU'; 
+        let player, timerInterval, secondsLeft = 0, isRunning = false, playerReady = false;
 
-        let player;
-        let timerInterval;
-        let secondsLeft = 0;
-        let isRunning = false;
-
-        function validateInput(input, max) {
-            input.value = input.value.replace(/[^0-9]/g, '');
-            if (input.value.length > 2) {
-                input.value = input.value.slice(0, 2);
-            }
-            let val = parseInt(input.value);
-            if (val > max) {
-                input.value = max;
-            }
-        }
-
-        function formatOnBlur(input) {
-            if (input.value === "" || input.value.length === 0) {
-                input.value = "00";
-            } else if (input.value.length === 1) {
-                input.value = "0" + input.value;
-            }
-        }
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('yt-player', {
+            player = new YT.Player('player', {
                 height: '100%',
                 width: '100%',
                 videoId: VIDEO_ID,
                 playerVars: { 
                     'autoplay': 0, 
-                    'controls': 1,
-                    'rel': 0,
-                    'modestbranding': 1,
-                    'iv_load_policy': 3,
+                    'controls': 1, 
+                    'rel': 0, 
+                    'modestbranding': 1, 
                     'playsinline': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onError': onPlayerError
                 }
             });
         }
 
+        function onPlayerReady(event) {
+            playerReady = true;
+        }
+
+        function onPlayerError(e) {
+            console.error("Error en reproductor YT", e);
+        }
+
+        function triggerHearts() {
+            const btn = document.getElementById('omaigaa-btn');
+            const text = document.getElementById('adoro-text');
+            btn.disabled = true;
+
+            text.classList.remove('fade-in-out');
+            void text.offsetWidth; 
+            text.classList.add('fade-in-out');
+
+            for (let i = 0; i < 40; i++) {
+                setTimeout(createHeart, i * 50);
+            }
+
+            let timeLeft = 10;
+            const originalText = "omaigaa";
+            const countdown = setInterval(() => {
+                timeLeft--;
+                btn.innerText = timeLeft > 0 ? `... ${timeLeft}` : originalText;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    btn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart-particle';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        function validateInput(input, max) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.length > 2) input.value = input.value.slice(0, 2);
+            if (parseInt(input.value) > max) input.value = max;
+        }
+
+        function formatOnBlur(input) {
+            if (input.value === "") input.value = "00";
+            else if (input.value.length === 1) input.value = "0" + input.value;
+        }
+
         function handleTimerAction() {
             const btn = document.getElementById('actionBtn');
-            
             if (!isRunning) {
                 if (secondsLeft === 0) {
                     const h = parseInt(document.getElementById('hrs').value) || 0;
@@ -246,39 +333,39 @@
                     const s = parseInt(document.getElementById('sec').value) || 0;
                     secondsLeft = (h * 3600) + (m * 60) + s;
                 }
-
                 if (secondsLeft <= 0) return;
 
                 document.getElementById('inputSection').classList.add('hidden');
                 document.getElementById('timerDisplay').classList.remove('hidden');
                 document.getElementById('resetBtn').classList.remove('hidden');
                 document.getElementById('timerContainer').classList.add('pulse-active');
-                
                 btn.innerText = "PAUSAR";
-                btn.classList.add('opacity-80');
-
                 isRunning = true;
                 startCountdown();
-                if (player && player.playVideo) player.playVideo();
+
+                if (playerReady && player && player.playVideo) {
+                    player.playVideo();
+                }
             } else {
                 clearInterval(timerInterval);
                 isRunning = false;
                 btn.innerText = "REANUDAR";
-                btn.classList.remove('opacity-80');
                 document.getElementById('timerContainer').classList.remove('pulse-active');
-                if (player && player.pauseVideo) player.pauseVideo();
+                if (playerReady && player && player.pauseVideo) {
+                    player.pauseVideo();
+                }
             }
         }
 
         function startCountdown() {
             updateDisplay();
             timerInterval = setInterval(() => {
-                if (secondsLeft > 0) {
-                    secondsLeft--;
-                    updateDisplay();
-                } else {
-                    clearInterval(timerInterval);
-                    onComplete();
+                if (secondsLeft > 0) { 
+                    secondsLeft--; 
+                    updateDisplay(); 
+                } else { 
+                    clearInterval(timerInterval); 
+                    onComplete(); 
                 }
             }, 1000);
         }
@@ -293,32 +380,28 @@
 
         function resetAll() {
             clearInterval(timerInterval);
-            secondsLeft = 0;
+            secondsLeft = 0; 
             isRunning = false;
-            
             document.getElementById('inputSection').classList.remove('hidden');
             document.getElementById('timerDisplay').classList.add('hidden');
             document.getElementById('resetBtn').classList.add('hidden');
             document.getElementById('timerContainer').classList.remove('pulse-active');
-            
-            const btn = document.getElementById('actionBtn');
-            btn.innerText = "COMENZAR";
-            btn.classList.remove('opacity-80');
-              
-            if (player && player.stopVideo) player.stopVideo();
+            document.getElementById('actionBtn').innerText = "COMENZAR";
+            if (playerReady && player && player.stopVideo) {
+                player.stopVideo();
+            }
         }
 
         function onComplete() {
-            if (player && player.pauseVideo) player.pauseVideo();
+            if (playerReady && player && player.pauseVideo) {
+                player.pauseVideo();
+            }
             document.getElementById('alarm-sound').play();
-            
             const container = document.getElementById('timerContainer');
-            container.classList.remove('pulse-active');
             container.classList.add('bg-red-900/40');
-            
-            setTimeout(() => {
-                container.classList.remove('bg-red-900/40');
-                resetAll();
+            setTimeout(() => { 
+                container.classList.remove('bg-red-900/40'); 
+                resetAll(); 
             }, 5000);
         }
     </script>
